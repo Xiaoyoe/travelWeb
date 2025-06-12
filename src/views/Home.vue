@@ -6,14 +6,20 @@
       <div class="hero-content">
         <h1 class="hero-title">探索世界的每一个角落</h1>
         <p class="hero-subtitle">发现令人惊叹的景点和难忘的旅行体验</p>
-        <el-input
-          v-model="searchQuery"
-          placeholder="搜索景点、城市..."
-          prefix-icon="Search"
-          @keyup.enter="search"
-          class="hero-search"
-        />
-        <el-button @click="search" type="primary" class="hero-button">搜索</el-button>
+        <div class="search-container">
+          <div class="search-container">
+            <input
+              v-model="searchQuery"
+              @keyup.enter="search"
+              placeholder="搜索景点、城市..."
+              class="search-input"
+            />
+            <button @click="search" class="search-button">
+              <span class="search-icon">🔍</span>
+              搜索
+            </button>
+          </div>
+        </div>
       </div>
     </div>
     
@@ -152,7 +158,7 @@ const featuredTopics = [
 
 const search = () => {
   if (searchQuery.value) {
-    router.push({ name: 'Search', query: { keyword: searchQuery.value } });
+    router.push({ name: 'Search', query: { q: searchQuery.value } });
     searchQuery.value = '';
   }
 };
@@ -218,6 +224,76 @@ const goToTopic = (topic) => {
   z-index: 10;
 }
 
+.search-container {
+  display: flex;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto 20px;
+}
+
+.search-input {
+  flex: 1;
+  height: 48px;
+  border: 1px solid #dcdfe6;
+  border-radius: 24px 0 0 24px;
+  padding: 0 20px;
+  font-size: 16px;
+  outline: none;
+  transition: all 0.3s;
+}
+
+.search-input:focus {
+  border-color: #409eff;
+}
+
+.search-button {
+  height: 48px;
+  padding: 0 30px;
+  border: none;
+  border-radius: 0 24px 24px 0;
+  background-color: #409eff;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.search-button:hover {
+  background-color: #66b1ff;
+}
+
+.search-icon {
+  margin-right: 8px;
+}
+
+.hero-search {
+  flex: 1;
+  height: 48px;
+  border-radius: 24px 0 0 24px;
+  border: none;
+  padding: 0 20px;
+  font-size: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.hero-button {
+  height: 48px;
+  padding: 0 30px;
+  border-radius: 0 24px 24px 0;
+  background-color: #409eff;
+  border: none;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(64, 158, 255, 0.3);
+  white-space: nowrap;
+}
+
+.hero-button:hover {
+  background-color: #66b1ff;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(64, 158, 255, 0.4);
+}
 .hero-title {
   font-size: 48px;
   margin-bottom: 20px;
@@ -230,12 +306,16 @@ const goToTopic = (topic) => {
 
 .hero-search {
   width: 400px;
-  margin: 0 auto 20px;
+  margin: 0 10px 20px 0;
+  display: inline-block;
 }
 
 .hero-button {
   padding: 12px 30px;
   font-size: 18px;
+  display: inline-block;
+  vertical-align: top;
+  margin-top: 1px;
 }
 
 .main-content {
@@ -324,3 +404,21 @@ const goToTopic = (topic) => {
   color: #666;
 }
 </style>
+
+.hero-section .search-container {
+  display: flex;
+  align-items: center;
+}
+
+.hero-section .search-input {
+  width: 400px;
+}
+
+.hero-section .search-button {
+  /* 初始按钮样式 */
+}
+
+.hero-section .search-button {
+  height: 48px;
+  padding: 0 24px;
+}
