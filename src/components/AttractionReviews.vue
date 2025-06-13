@@ -48,7 +48,7 @@
       :page-sizes="[5, 10, 20]"
       :page-size="pageSize"
       layout="total, sizes, prev, pager, next, jumper"
-      :total="attraction.reviews.length"
+      :total="attraction?.reviews?.length || 0"
     >
     </el-pagination>
   </div>

@@ -71,7 +71,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue';
+import { ref, computed, watch, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useStore } from 'vuex';
 import Header from '../components/Header.vue';
@@ -87,9 +87,24 @@ const route = useRoute();
 const store = useStore();
 
 const attractionId = computed(() => route.params.id);
-const attraction = computed(() => 
-  store.state.attractions.find(attr => attr.id === attractionId.value)
-);
+const attraction = computed(() => {
+  const current = store.getters['attraction/currentAttraction'];
+  return {
+    ...current,
+    // 确保图片数据存在
+    images: current?.images || [],
+    // 确保描述数据存在
+    description: current?.description || '暂无描述'
+  };
+});
+
+onMounted(() => {
+  store.dispatch('attraction/fetchAttractionById', attractionId.value);
+});
+
+watch(attractionId, (newId) => {
+  store.dispatch('attraction/fetchAttractionById', newId);
+});
 
 const bookingForm = ref({
   date: null,

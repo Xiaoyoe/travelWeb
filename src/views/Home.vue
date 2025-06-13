@@ -60,16 +60,7 @@
             />
           </div>
           
-          <el-pagination
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange"
-            :current-page="currentPage"
-            :page-sizes="[6, 12, 18]"
-            :page-size="pageSize"
-            layout="total, sizes, prev, pager, next, jumper"
-            :total="filteredAttractions.length"
-          >
-          </el-pagination>
+
         </div>
         
         <!-- 特色专题 -->
@@ -95,9 +86,10 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue';
+import { ref, computed, watch, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useStore } from 'vuex';
+import api from '../services/api';
 import Header from '../components/Header.vue';
 import Footer from '../components/Footer.vue';
 import AttractionCard from '../components/AttractionCard.vue';
@@ -108,53 +100,50 @@ const store = useStore();
 const searchQuery = ref('');
 const activeCategory = ref('all');
 const activeRegion = ref('all');
-const currentPage = ref(1);
-const pageSize = ref(6);
 
-const attractions = computed(() => store.state.attractions);
+
+const attractions = ref([]);
+
+onMounted(async () => {
+  try {
+    const response = await api.getAttractions();
+    attractions.value = response;
+  } catch (error) {
+    console.error('获取景点数据失败:', error);
+  }
+});
 
 const filteredAttractions = computed(() => {
-  let result = [...attractions.value];
+  if (!attractions.value || !Array.isArray(attractions.value)) return [];
+  
+  let filtered = [...attractions.value];
   
   // 按分类筛选
   if (activeCategory.value !== 'all') {
-    result = result.filter(attraction => attraction.tags.includes(activeCategory.value));
+    filtered = filtered.filter(attraction => attraction.tags.includes(activeCategory.value));
   }
   
-  // 按地区筛选
+  // 按地区筛选 - 直接使用API已筛选的数据
   if (activeRegion.value !== 'all') {
-    result = result.filter(attraction => {
-      if (activeRegion.value === '国内') {
-        return attraction.location.includes('中国');
-      } else {
-        return attraction.location.includes(activeRegion.value);
-      }
-    });
+    console.log('当前筛选地区:', activeRegion.value);
+    console.log('筛选后的景点:', filtered);
   }
   
-  return result;
+  console.log('筛选后的景点数据:', filtered);
+  return filtered;
 });
 
-const featuredTopics = [
-  {
-    id: 1,
-    title: "夏季避暑胜地TOP3",
-    description: "逃离酷暑，探索清凉秘境",
-    image: "https://picsum.photos/id/10/800/400"
-  },
-  {
-    id: 2,
-    title: "国庆黄金周人少景美目的地",
-    description: "避开人群，享受宁静假期",
-    image: "https://picsum.photos/id/15/800/400"
-  },
-  {
-    id: 3,
-    title: "亲子游必去3个景点",
-    description: "与孩子一起创造美好回忆",
-    image: "https://picsum.photos/id/20/800/400"
+const featuredTopics = ref([]);
+
+onMounted(async () => {
+  try {
+    const response = await api.getTopics();
+    featuredTopics.value = response.data || response;
+    console.log('专题数据:', featuredTopics.value);
+  } catch (error) {
+    console.error('获取专题数据失败:', error);
   }
-];
+});
 
 const search = () => {
   if (searchQuery.value) {
@@ -163,23 +152,31 @@ const search = () => {
   }
 };
 
-const handleCategoryClick = (tab) => {
+const handleCategoryClick = async (tab) => {
   activeCategory.value = tab.name;
   currentPage.value = 1;
+  try {
+    const response = await api.filterAttractions(tab.name, activeRegion.value);
+    attractions.value = response;
+  } catch (error) {
+    console.error('获取景点数据失败:', error);
+  }
 };
 
-const handleRegionClick = (region) => {
+const handleRegionClick = async (region) => {
+  if (activeRegion.value === region) return;
   activeRegion.value = region;
   currentPage.value = 1;
+  try {
+    const response = await api.filterAttractions(activeCategory.value, region);
+    attractions.value = Array.isArray(response.data) ? response.data : 
+                      Array.isArray(response) ? response : [];
+  } catch (error) {
+    console.error('获取景点数据失败:', error);
+  }
 };
 
-const handleSizeChange = (newSize) => {
-  pageSize.value = newSize;
-};
 
-const handleCurrentChange = (newPage) => {
-  currentPage.value = newPage;
-};
 
 const goToTopic = (topic) => {
   // 这里应该导航到专题详情页，现在只是简单提示
@@ -403,22 +400,5 @@ const goToTopic = (topic) => {
   margin: 0;
   color: #666;
 }
+
 </style>
-
-.hero-section .search-container {
-  display: flex;
-  align-items: center;
-}
-
-.hero-section .search-input {
-  width: 400px;
-}
-
-.hero-section .search-button {
-  /* 初始按钮样式 */
-}
-
-.hero-section .search-button {
-  height: 48px;
-  padding: 0 24px;
-}

@@ -89,9 +89,11 @@ const registerRules = {
 const handleRegister = () => {
   registerFormRef.value.validate((valid) => {
     if (valid) {
-      // 模拟注册
-      store.dispatch('register', {
+      // 调用注册action
+      store.dispatch('user/register', {
         username: registerForm.username,
+        email: registerForm.email,
+        password: registerForm.password,
         nickname: registerForm.nickname
       });
       router.push({ name: 'Home' });

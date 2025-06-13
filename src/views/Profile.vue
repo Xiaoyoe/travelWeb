@@ -10,8 +10,16 @@
               <div class="user-avatar">
                 <img src="https://picsum.photos/id/1005/200/200" alt="用户头像" />
               </div>
-              <h3 class="user-name">{{ userInfo.nickname }}</h3>
+              <h3 class="user-name">{{ userInfo.nickname || '未设置昵称' }}</h3>
               <p class="user-email">{{ userInfo.email || '未设置邮箱' }}</p>
+              <div class="user-details">
+                <p v-if="userInfo.frequentCity">
+                  <i class="el-icon-location"></i> 常去城市: {{ userInfo.frequentCity }}
+                </p>
+                <p v-if="userInfo.preferences?.length">
+                  <i class="el-icon-star-off"></i> 偏好: {{ userInfo.preferences.join('、') }}
+                </p>
+              </div>
             </div>
             
             <div class="sidebar-menu">
@@ -52,9 +60,11 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, watch, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useStore } from 'vuex';
+import { ElMessage } from 'element-plus';
+import api from '../services/api';
 import Header from '../components/Header.vue';
 import Footer from '../components/Footer.vue';
 import UserInfoForm from '../components/UserInfoForm.vue';
@@ -66,7 +76,28 @@ const router = useRouter();
 const route = useRoute();
 const store = useStore();
 
-const userInfo = computed(() => store.state.user);
+const userInfo = computed(() => store.state.user?.user || {});
+
+// 获取用户信息
+onMounted(async () => {
+  try {
+    const userId = store.state.user?.user?.id;
+    if (!userId) {
+      console.error('用户ID未找到，请先登录');
+      router.push('/login');
+      return;
+    }
+    const response = await api.getUserInfo(userId);
+    if (!response?.data) {
+      throw new Error('获取用户信息失败');
+    }
+    store.commit('user/SET_USER', response.data);
+  } catch (error) {
+    console.error('获取用户信息出错:', error);
+    ElMessage.error('获取用户信息失败，请稍后再试');
+    console.error('获取用户信息失败:', error);
+  }
+});
 
 const activeMenu = ref('profile');
 const currentComponent = ref('UserInfoForm');
@@ -82,12 +113,15 @@ const componentsMap = {
 watch(() => route.name, (newName) => {
   if (newName === 'Profile') {
     activeMenu.value = 'profile';
-    currentComponent.value = componentsMap[activeMenu.value];
   } else if (newName === 'Favorites') {
     activeMenu.value = 'favorites';
-    currentComponent.value = componentsMap[activeMenu.value];
+  } else if (newName === 'Reviews') {
+    activeMenu.value = 'reviews';
+  } else if (newName === 'Security') {
+    activeMenu.value = 'security';
   }
-});
+  currentComponent.value = componentsMap[activeMenu.value];
+}, { immediate: true });
 
 const handleMenuSelect = (index) => {
   activeMenu.value = index;
@@ -95,6 +129,10 @@ const handleMenuSelect = (index) => {
   
   if (index === 'favorites') {
     router.push({ name: 'Favorites' });
+  } else if (index === 'reviews') {
+    router.push({ name: 'Reviews' });
+  } else if (index === 'security') {
+    router.push({ name: 'Security' });
   } else {
     router.push({ name: 'Profile' });
   }
@@ -163,6 +201,23 @@ const handleMenuSelect = (index) => {
   margin: 0;
   color: #666;
   font-size: 14px;
+}
+
+.user-details {
+  margin-top: 15px;
+}
+
+.user-details p {
+  margin: 8px 0;
+  color: #555;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+}
+
+.user-details i {
+  margin-right: 8px;
+  color: #409EFF;
 }
 
 .sidebar-menu {

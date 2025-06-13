@@ -44,15 +44,25 @@ const loginRules = {
   ]
 };
 
-const handleLogin = () => {
-  loginFormRef.value.validate((valid) => {
+const handleLogin = async () => {
+  loginFormRef.value.validate(async (valid) => {
     if (valid) {
-      // 模拟登录
-      store.dispatch('login', {
-        username: loginForm.username,
-        nickname: loginForm.username === 'admin' ? '管理员' : '旅行者'
-      });
-      router.push({ name: 'Home' });
+      try {
+        // 调用登录action并等待返回结果
+        const response = await store.dispatch('user/login', {
+          username: loginForm.username,
+          password: loginForm.password
+        });
+        
+        // 确保获取到用户ID后再跳转
+        if (response?.user?.id) {
+          router.push({ name: 'Profile' });
+        } else {
+          console.error('登录成功但未获取到用户ID');
+        }
+      } catch (error) {
+        console.error('登录失败:', error);
+      }
     } else {
       return false;
     }

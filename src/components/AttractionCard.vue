@@ -1,7 +1,7 @@
 <template>
   <div class="attraction-card" @click="goToDetail">
     <div class="card-image">
-      <img :src="attraction.images[0]" :alt="attraction.name" />
+      <img :src="attraction.images?.[0] || ''" :alt="attraction.name" />
       <div class="image-overlay">
         <el-tag v-for="tag in attraction.tags" :key="tag" :type="getTagType(tag)">{{ tag }}</el-tag>
       </div>
@@ -23,7 +23,7 @@
       </div>
       <el-button 
         type="primary" 
-        size="mini" 
+        size="small" 
         @click.stop="toggleFavorite"
         :icon="isFavorite ? 'Heart' : 'HeartOutlined'"
       >
@@ -49,7 +49,7 @@ const router = useRouter();
 const store = useStore();
 
 const isFavorite = computed(() => {
-  return store.state.favorites.includes(props.attraction.id);
+  return store.state.favorites?.includes(props.attraction.id) || false;
 });
 
 const toggleFavorite = () => {

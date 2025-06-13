@@ -1,0 +1,267 @@
+- GET /attractions - 获取所有景点列表
+- GET /attractions/<id> - 获取指定ID的景点详情
+- POST /attractions - 创建新景点
+- PUT /attractions/<id> - 更新景点信息
+- DELETE /attractions/<id> - 删除景点
+- GET /attractions/filter?category=<id>&region=<id> - 按分类和地区筛选景点 2. 分类模块 (Categories)
+- GET /categories - 获取所有分类
+- GET /categories/<id>/attractions - 获取指定分类下的景点 3. 地区模块 (Regions)
+- GET /regions - 获取所有地区
+- GET /regions/<id>/attractions - 获取指定地区下的景点 4. 用户模块 (Users)
+- GET /users/profile - 获取用户个人资料
+- PUT /users/profile - 更新用户个人资料
+- GET /users/all - 获取所有用户列表
+- POST /users/avatar - 上传用户头像
+- GET /users/stats - 获取用户统计数据 5. 认证模块 (Auth)
+- GET /auth/ - 认证模块根路由
+- POST /auth/login - 用户登录
+- GET /auth/profile - 获取用户个人信息
+- GET /auth/public - 获取所有用户信息（公开接口） 6. 收藏模块 (Favorites)
+- GET /favorites - 获取收藏列表
+- POST /favorites - 创建收藏
+- DELETE /favorites/<id> - 删除收藏 7. 评论模块 (Reviews)
+- GET /reviews - 获取评论列表
+- GET /reviews/<id> - 获取指定评论
+- POST /reviews - 创建评论
+- DELETE /reviews/<id> - 删除评论 8. 话题模块 (Topics)
+- GET /topics - 获取话题列表
+- GET /topics/<id> - 获取指定话题
+- POST /topics - 创建话题
+- DELETE /topics/<id> - 删除话题 9. 搜索模块 (Search)
+- GET /search?q=<关键词>&category=<id>&region=<id> - 综合搜索景点、分类和地区
+
+
+
+/*
+ Navicat Premium Dump SQL
+
+ Source Server         : mydb
+ Source Server Type    : MySQL
+ Source Server Version : 50720 (5.7.20-log)
+ Source Host           : localhost:3306
+ Source Schema         : db_travel
+
+ Target Server Type    : MySQL
+ Target Server Version : 50720 (5.7.20-log)
+ File Encoding         : 65001
+
+ Date: 13/06/2025 20:02:44
+*/
+
+SET NAMES utf8mb4;
+SET FOREIGN_KEY_CHECKS = 0;
+
+-- ----------------------------
+-- Table structure for attractions
+-- ----------------------------
+DROP TABLE IF EXISTS `attractions`;
+CREATE TABLE `attractions`  (
+  `id` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `location` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `description` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL,
+  `history` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL,
+  `features` json NULL,
+  `tips` json NULL,
+  `openTime` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `price` decimal(10, 2) NULL DEFAULT NULL,
+  `discountPrice` decimal(10, 2) NULL DEFAULT NULL,
+  `suggestedDuration` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `rating` float NULL DEFAULT NULL,
+  `reviewCount` int(11) NULL DEFAULT NULL,
+  `tags` json NULL,
+  `images` json NULL,
+  `phone` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `website` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `category_id` int(11) NULL DEFAULT NULL,
+  `region_id` int(11) NULL DEFAULT NULL,
+  `lat` decimal(10, 8) NULL DEFAULT NULL,
+  `lng` decimal(11, 8) NULL DEFAULT NULL,
+  PRIMARY KEY (`id`) USING BTREE,
+  INDEX `category_id`(`category_id`) USING BTREE,
+  INDEX `region_id`(`region_id`) USING BTREE,
+  CONSTRAINT `attractions_ibfk_1` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  CONSTRAINT `attractions_ibfk_2` FOREIGN KEY (`region_id`) REFERENCES `regions` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
+) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of attractions
+-- ----------------------------
+INSERT INTO `attractions` VALUES ('att001', '故宫博物院', '北京市东城区景山前街4号', '明清两代的皇家宫殿，世界上现存规模最大、保存最为完整的木质结构古建筑之一。', '建于1406年，已有600多年历史，曾居住过24位皇帝。', '[\"世界文化遗产\", \"中国古代建筑精华\", \"皇家文物珍藏\"]', '[\"建议提前网上购票\", \"避开节假日人流高峰\", \"可租用电子讲解器\"]', '08:30-17:00', 60.00, 40.00, '4-6小时', 4.8, 12500, '[\"历史\", \"文化\", \"建筑\"]', '[\"https://picsum.photos/seed/att001-1/800/600\", \"https://picsum.photos/seed/att001-2/800/600\", \"https://picsum.photos/seed/att001-3/800/600\"]', '010-85007421', 'http://www.dpm.org.cn', 2, 2, NULL, NULL);
+INSERT INTO `attractions` VALUES ('att002', '上海迪士尼乐园', '上海市浦东新区川沙新镇', '中国大陆首座迪士尼主题乐园，拥有六大主题园区。', '2016年6月16日正式开园。', '[\"奇幻童话城堡\", \"创极速光轮\", \"迪士尼角色互动\"]', '[\"下载官方APP查看排队时间\", \"可购买快速通行证\", \"晚上烟花秀不容错过\"]', '08:00-22:00', 399.00, 299.00, '1天', 4.7, 9800, '[\"主题乐园\", \"家庭\", \"娱乐\"]', '[\"https://picsum.photos/seed/att002-1/800/600\", \"https://picsum.photos/seed/att002-2/800/600\", \"https://picsum.photos/seed/att002-3/800/600\"]', '021-31589888', 'https://www.shanghaidisneyresort.com', 3, 3, NULL, NULL);
+INSERT INTO `attractions` VALUES ('att003', '广州塔', '广州市海珠区阅江西路222号', '昵称小蛮腰，中国第一高塔，世界第二高塔。', '2009年建成，2010年正式对外开放。', '[\"433米高空观景平台\", \"488米极速云霄\", \"旋转餐厅\"]', '[\"天气晴朗时视野最佳\", \"傍晚可同时欣赏日落和夜景\", \"塔上风大注意保暖\"]', '09:30-22:30', 150.00, 120.00, '2-3小时', 4.6, 7600, '[\"地标\", \"现代建筑\", \"夜景\"]', '[\"https://picsum.photos/seed/att003-1/800/600\", \"https://picsum.photos/seed/att003-2/800/600\", \"https://picsum.photos/seed/att003-3/800/600\"]', '020-89338222', 'http://www.cantontower.com', 1, 4, NULL, NULL);
+INSERT INTO `attractions` VALUES ('att004', '成都大熊猫繁育研究基地', '成都市成华区熊猫大道1375号', '世界著名的大熊猫迁地保护基地，科研繁育中心。', '1987年建立，最初从野外救助的6只大熊猫开始。', '[\"近距离观察大熊猫\", \"熊猫产房\", \"熊猫幼崽\"]', '[\"早上9-11点是熊猫最活跃的时间\", \"参观时保持安静\", \"禁止使用闪光灯\"]', '07:30-18:00', 58.00, 29.00, '3-4小时', 4.9, 11200, '[\"动物\", \"自然\", \"亲子\"]', '[\"https://picsum.photos/seed/att004-1/800/600\", \"https://picsum.photos/seed/att004-2/800/600\", \"https://picsum.photos/seed/att004-3/800/600\"]', '028-83510033', 'http://www.panda.org.cn', 3, 2, NULL, NULL);
+INSERT INTO `attractions` VALUES ('att005', '西湖', '杭州市西湖区', '中国十大风景名胜之一，2011年被列入世界文化遗产名录。', '有2000多年历史，历代文人墨客留下无数诗篇。', '[\"苏堤春晓\", \"三潭印月\", \"雷峰夕照\"]', '[\"步行或骑行游览最佳\", \"四季景色各有特色\", \"可乘船游湖\"]', '全天开放', 0.00, 0.00, '半天至1天', 4.8, 15800, '[\"湖泊\", \"自然\", \"文化\"]', '[\"https://picsum.photos/seed/att005-1/800/600\", \"https://picsum.photos/seed/att005-2/800/600\", \"https://picsum.photos/seed/att005-3/800/600\"]', '0571-87179617', 'http://www.hzwestlake.com', 1, 3, NULL, NULL);
+INSERT INTO `attractions` VALUES ('att006', '普吉岛', '泰国', '泰国最大的岛屿，以其美丽的海滩和清澈的海水闻名', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 4, NULL, NULL);
+INSERT INTO `attractions` VALUES ('att007', '巴厘岛', '印度尼西亚', '著名的度假胜地，拥有独特的文化和自然景观', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 4, NULL, NULL);
+INSERT INTO `attractions` VALUES ('att008', '埃菲尔铁塔', '法国巴黎', '世界著名建筑，巴黎的象征', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 11, NULL, NULL);
+INSERT INTO `attractions` VALUES ('att009', '罗马斗兽场', '意大利罗马', '古罗马时期最大的圆形角斗场', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 12, NULL, NULL);
+
+-- ----------------------------
+-- Table structure for categories
+-- ----------------------------
+DROP TABLE IF EXISTS `categories`;
+CREATE TABLE `categories`  (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `description` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL,
+  `icon` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of categories
+-- ----------------------------
+INSERT INTO `categories` VALUES (1, '自然风光', '壮丽的自然景观和风景名胜', 'nature.png');
+INSERT INTO `categories` VALUES (2, '历史文化', '具有历史意义和文化价值的景点', 'history.png');
+INSERT INTO `categories` VALUES (3, '亲子乐园', '适合家庭和儿童游玩的场所', 'family.png');
+INSERT INTO `categories` VALUES (4, '网红打卡', '社交媒体上热门的打卡地点', 'trending.png');
+INSERT INTO `categories` VALUES (5, '美食购物', '提供美食和购物体验的场所', 'food.png');
+
+-- ----------------------------
+-- Table structure for favorites
+-- ----------------------------
+DROP TABLE IF EXISTS `favorites`;
+CREATE TABLE `favorites`  (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `userId` int(11) NULL DEFAULT NULL,
+  `attractionId` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  PRIMARY KEY (`id`) USING BTREE,
+  INDEX `userId`(`userId`) USING BTREE,
+  INDEX `attractionId`(`attractionId`) USING BTREE,
+  CONSTRAINT `favorites_ibfk_1` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  CONSTRAINT `favorites_ibfk_2` FOREIGN KEY (`attractionId`) REFERENCES `attractions` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
+) ENGINE = InnoDB AUTO_INCREMENT = 11 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of favorites
+-- ----------------------------
+INSERT INTO `favorites` VALUES (1, 1, 'att001');
+INSERT INTO `favorites` VALUES (2, 1, 'att005');
+INSERT INTO `favorites` VALUES (3, 2, 'att002');
+INSERT INTO `favorites` VALUES (4, 2, 'att004');
+INSERT INTO `favorites` VALUES (5, 3, 'att002');
+INSERT INTO `favorites` VALUES (6, 3, 'att003');
+INSERT INTO `favorites` VALUES (7, 4, 'att001');
+INSERT INTO `favorites` VALUES (8, 4, 'att005');
+INSERT INTO `favorites` VALUES (9, 5, 'att003');
+INSERT INTO `favorites` VALUES (10, 5, 'att004');
+
+-- ----------------------------
+-- Table structure for regions
+-- ----------------------------
+DROP TABLE IF EXISTS `regions`;
+CREATE TABLE `regions`  (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `type` enum('国内','国际') CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `parent_id` int(11) NULL DEFAULT NULL,
+  PRIMARY KEY (`id`) USING BTREE,
+  INDEX `parent_id`(`parent_id`) USING BTREE,
+  CONSTRAINT `regions_ibfk_1` FOREIGN KEY (`parent_id`) REFERENCES `regions` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
+) ENGINE = InnoDB AUTO_INCREMENT = 15 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of regions
+-- ----------------------------
+INSERT INTO `regions` VALUES (1, '全部', '国内', NULL);
+INSERT INTO `regions` VALUES (2, '国内', '国内', NULL);
+INSERT INTO `regions` VALUES (3, '东南亚', '国际', NULL);
+INSERT INTO `regions` VALUES (4, '欧洲', '国际', NULL);
+INSERT INTO `regions` VALUES (5, '美洲', '国际', NULL);
+INSERT INTO `regions` VALUES (6, '北京', '国内', 2);
+INSERT INTO `regions` VALUES (7, '上海', '国内', 2);
+INSERT INTO `regions` VALUES (8, '广州', '国内', 2);
+INSERT INTO `regions` VALUES (9, '泰国', '国际', 3);
+INSERT INTO `regions` VALUES (10, '新加坡', '国际', 3);
+INSERT INTO `regions` VALUES (11, '法国', '国际', 4);
+INSERT INTO `regions` VALUES (12, '意大利', '国际', 4);
+INSERT INTO `regions` VALUES (13, '美国', '国际', 5);
+INSERT INTO `regions` VALUES (14, '加拿大', '国际', 5);
+
+-- ----------------------------
+-- Table structure for reviews
+-- ----------------------------
+DROP TABLE IF EXISTS `reviews`;
+CREATE TABLE `reviews`  (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `attractionId` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `userId` int(11) NULL DEFAULT NULL,
+  `userName` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `userAvatar` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `rating` int(11) NULL DEFAULT NULL,
+  `content` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL,
+  `images` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL,
+  `date` date NULL DEFAULT NULL,
+  PRIMARY KEY (`id`) USING BTREE,
+  INDEX `attractionId`(`attractionId`) USING BTREE,
+  INDEX `userId`(`userId`) USING BTREE,
+  CONSTRAINT `reviews_ibfk_1` FOREIGN KEY (`attractionId`) REFERENCES `attractions` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  CONSTRAINT `reviews_ibfk_2` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
+) ENGINE = InnoDB AUTO_INCREMENT = 11 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of reviews
+-- ----------------------------
+INSERT INTO `reviews` VALUES (1, 'att001', 1, '旅行者一号', 'avatar1.jpg', 5, '非常震撼的古代建筑群，建议租用讲解器，能了解更多历史故事。', '[\"rev1.jpg\",\"rev2.jpg\"]', '2023-05-15');
+INSERT INTO `reviews` VALUES (2, 'att001', 2, '冒险家', 'avatar2.jpg', 4, '人太多了，虽然很壮观但体验受影响，建议淡季来。', '[\"rev3.jpg\"]', '2023-06-20');
+INSERT INTO `reviews` VALUES (3, 'att002', 3, '美食家', 'avatar3.jpg', 5, '带孩子玩得非常开心，烟花秀太美了！园区餐饮选择也很多。', '[\"rev4.jpg\",\"rev5.jpg\",\"rev6.jpg\"]', '2023-07-10');
+INSERT INTO `reviews` VALUES (4, 'att002', 4, '摄影师', 'avatar4.jpg', 4, '拍照的好地方，但人实在太多，很难拍到没有人的照片。', '[]', '2023-08-05');
+INSERT INTO `reviews` VALUES (5, 'att003', 5, '家庭旅行', 'avatar5.jpg', 5, '广州夜景尽收眼底，极速云霄很刺激，孩子玩得很开心！', '[\"rev7.jpg\"]', '2023-09-12');
+INSERT INTO `reviews` VALUES (6, 'att003', 1, '旅行者一号', 'avatar1.jpg', 3, '门票有点贵，天气不好时上去什么都看不到。', '[]', '2023-10-08');
+INSERT INTO `reviews` VALUES (7, 'att004', 2, '冒险家', 'avatar2.jpg', 5, '大熊猫太可爱了！看到好几只熊猫在吃竹子，还有幼崽在玩耍。', '[\"rev8.jpg\",\"rev9.jpg\"]', '2023-11-15');
+INSERT INTO `reviews` VALUES (8, 'att004', 3, '美食家', 'avatar3.jpg', 4, '很好的亲子游地点，但园区内餐饮选择有限。', '[\"rev10.jpg\"]', '2023-12-20');
+INSERT INTO `reviews` VALUES (9, 'att005', 4, '摄影师', 'avatar4.jpg', 5, '西湖四季皆美，这次秋天来，层林尽染，美不胜收。', '[\"rev11.jpg\",\"rev12.jpg\",\"rev13.jpg\"]', '2024-01-05');
+INSERT INTO `reviews` VALUES (10, 'att005', 5, '家庭旅行', 'avatar5.jpg', 5, '免费开放的5A景区，沿着湖边散步非常惬意，租了自行车环湖也很棒。', '[\"rev14.jpg\"]', '2024-02-18');
+
+-- ----------------------------
+-- Table structure for topics
+-- ----------------------------
+DROP TABLE IF EXISTS `topics`;
+CREATE TABLE `topics`  (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `title` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `description` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL,
+  `image` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of topics
+-- ----------------------------
+INSERT INTO `topics` VALUES (1, '中国世界文化遗产之旅', '探索中国最著名的世界文化遗产地，感受五千年文明的魅力。', 'topic1.jpg');
+INSERT INTO `topics` VALUES (2, '亲子游乐园精选', '最适合全家出游的主题乐园和动物园，让孩子快乐成长。', 'topic2.jpg');
+INSERT INTO `topics` VALUES (3, '城市地标打卡', '不可错过的城市标志性建筑，留下你的旅行足迹。', 'topic3.jpg');
+INSERT INTO `topics` VALUES (4, '美食之旅', '跟着味蕾去旅行，探索各地最具特色的美食体验。', 'topic4.jpg');
+INSERT INTO `topics` VALUES (5, '自然风光摄影点', '摄影师推荐的绝美自然景观，捕捉最美的瞬间。', 'topic5.jpg');
+
+-- ----------------------------
+-- Table structure for users
+-- ----------------------------
+DROP TABLE IF EXISTS `users`;
+CREATE TABLE `users`  (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `username` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `password` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `nickname` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `email` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `frequentCity` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `preferences` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL,
+  `avatar` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `lastLogin` datetime NULL DEFAULT NULL,
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE INDEX `username`(`username`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of users
+-- ----------------------------
+INSERT INTO `users` VALUES (1, 'traveler1', '$2a$10$xJwL5v5Jz5z5z5z5z5z5zO', '旅行者一号', 'traveler1@example.com', '北京', '[\"历史\",\"文化\",\"美食\"]', 'avatar1.jpg', '2025-06-13 19:35:24');
+INSERT INTO `users` VALUES (2, 'adventure2', '$2a$10$xJwL5v5Jz5z5z5z5z5z5zO', '冒险家', 'adventure2@example.com', '上海', '[\"冒险\",\"户外\",\"自然\"]', 'avatar2.jpg', '2025-06-13 19:35:24');
+INSERT INTO `users` VALUES (3, 'foodie3', '$2a$10$xJwL5v5Jz5z5z5z5z5z5zO', '美食家', 'foodie3@example.com', '广州', '[\"美食\",\"购物\",\"休闲\"]', 'avatar3.jpg', '2025-06-13 19:35:24');
+INSERT INTO `users` VALUES (4, 'photog4', '$2a$10$xJwL5v5Jz5z5z5z5z5z5zO', '摄影师', 'photog4@example.com', '成都', '[\"摄影\",\"自然\",\"人文\"]', 'avatar4.jpg', '2025-06-13 19:35:24');
+INSERT INTO `users` VALUES (5, 'family5', '$2a$10$xJwL5v5Jz5z5z5z5z5z5zO', '家庭旅行', 'family5@example.com', '杭州', '[\"家庭\",\"休闲\",\"公园\"]', 'avatar5.jpg', '2025-06-13 19:35:24');
+INSERT INTO `users` VALUES (6, 'your_username', 'your_password', NULL, 'your_email@example.com', NULL, NULL, 'avatar6.jpg', '2025-06-13 19:35:24');
+INSERT INTO `users` VALUES (7, 'xiaoyoe', '111111', '约尔', 'xiaoyoe@qq.com', '广州', '[\"家庭\",\"休闲\",\"公园\"]', 'avatar7.jpg', '2025-06-13 19:35:24');
+
+SET FOREIGN_KEY_CHECKS = 1;

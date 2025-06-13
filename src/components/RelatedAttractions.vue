@@ -28,11 +28,10 @@ const store = useStore();
 
 const relatedAttractions = computed(() => {
   // 筛选出与当前景点同类型或同地区的景点
-  return store.state.attractions
-    .filter(attr => 
-      attr.id !== props.currentAttraction.id && 
-      (attr.tags.some(tag => props.currentAttraction.tags.includes(tag)) || 
-       attr.location.includes(props.currentAttraction.location.split(' ')[0]))
+  return store.state.attractions?.filter(attr => 
+    attr?.id !== props.currentAttraction?.id && 
+    (attr?.tags?.some(tag => props.currentAttraction?.tags?.includes(tag)) || 
+     attr?.location?.includes(props.currentAttraction?.location?.split(' ')[0] || ''))
     )
     .slice(0, 4);
 });

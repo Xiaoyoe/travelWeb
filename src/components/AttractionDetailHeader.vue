@@ -73,7 +73,7 @@ const props = defineProps({
 const store = useStore();
 
 const isFavorite = computed(() => {
-  return store.state.favorites.includes(props.attraction.id);
+  return store.state.favorites?.includes(props.attraction?.id) || false;
 });
 
 const toggleFavorite = () => {
