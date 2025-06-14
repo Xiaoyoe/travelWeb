@@ -74,6 +74,7 @@
 import { ref, computed, watch, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useStore } from 'vuex';
+import api from '../services/api';
 import Header from '../components/Header.vue';
 import Footer from '../components/Footer.vue';
 import AttractionDetailHeader from '../components/AttractionDetailHeader.vue';
@@ -87,15 +88,35 @@ const route = useRoute();
 const store = useStore();
 
 const attractionId = computed(() => route.params.id);
-const attraction = computed(() => {
-  const current = store.getters['attraction/currentAttraction'];
-  return {
-    ...current,
-    // 确保图片数据存在
-    images: current?.images || [],
-    // 确保描述数据存在
-    description: current?.description || '暂无描述'
-  };
+const attraction = ref(null);
+
+const fetchAttractionData = async (id) => {
+  try {
+    const [attractionResponse, reviewsResponse] = await Promise.all([
+      api.getAttractionById(id),
+      api.getReviews({ attractionId: id })
+    ]);
+    
+    console.log('获取到的景点数据:', attractionResponse);
+    console.log('获取到的评论数据:', reviewsResponse);
+    
+    attraction.value = {
+      ...attractionResponse,
+      images: attractionResponse?.images || [],
+      description: attractionResponse?.description || '暂无描述',
+      reviews: reviewsResponse || []
+    };
+  } catch (error) {
+    console.error('获取数据失败:', error);
+  }
+};
+
+onMounted(() => {
+  fetchAttractionData(attractionId.value);
+});
+
+watch(attractionId, (newId) => {
+  fetchAttractionData(newId);
 });
 
 onMounted(() => {

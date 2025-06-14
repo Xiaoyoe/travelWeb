@@ -72,6 +72,7 @@ h3 {
 ul {
   padding-left: 20px;
   margin: 0;
+  list-style: none;
 }
 
 li {

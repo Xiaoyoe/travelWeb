@@ -56,7 +56,8 @@
             <AttractionCard 
               v-for="attraction in filteredAttractions" 
               :key="attraction.id" 
-              :attraction="attraction" 
+              :attraction="attraction"
+              @click="$router.push({ name: 'AttractionDetail', params: { id: attraction.id } })"
             />
           </div>
           
@@ -123,13 +124,6 @@ const filteredAttractions = computed(() => {
     filtered = filtered.filter(attraction => attraction.tags.includes(activeCategory.value));
   }
   
-  // 按地区筛选 - 直接使用API已筛选的数据
-  if (activeRegion.value !== 'all') {
-    console.log('当前筛选地区:', activeRegion.value);
-    console.log('筛选后的景点:', filtered);
-  }
-  
-  console.log('筛选后的景点数据:', filtered);
   return filtered;
 });
 
@@ -139,7 +133,6 @@ onMounted(async () => {
   try {
     const response = await api.getTopics();
     featuredTopics.value = response.data || response;
-    console.log('专题数据:', featuredTopics.value);
   } catch (error) {
     console.error('获取专题数据失败:', error);
   }
@@ -162,6 +155,8 @@ const handleCategoryClick = async (tab) => {
     console.error('获取景点数据失败:', error);
   }
 };
+
+const currentPage = ref(1);
 
 const handleRegionClick = async (region) => {
   if (activeRegion.value === region) return;
