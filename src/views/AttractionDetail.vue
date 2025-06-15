@@ -90,15 +90,18 @@ const store = useStore();
 const attractionId = computed(() => route.params.id);
 const attraction = ref(null);
 
-const fetchAttractionData = async (id) => {
+const fetchAttractionData = async (idOrName) => {
   try {
-    const [attractionResponse, reviewsResponse] = await Promise.all([
-      api.getAttractionById(id),
-      api.getReviews({ attractionId: id })
-    ]);
+    let attractionResponse;
     
-    console.log('获取到的景点数据:', attractionResponse);
-    console.log('获取到的评论数据:', reviewsResponse);
+    // 判断是ID还是名称
+    if (idOrName.startsWith('att')) {
+      attractionResponse = await api.getAttractionById(idOrName);
+    } else {
+      attractionResponse = await api.getAttractionByName(decodeURIComponent(idOrName));
+    }
+    
+    const reviewsResponse = await api.getReviews({ attractionId: attractionResponse.id });
     
     attraction.value = {
       ...attractionResponse,
@@ -108,6 +111,7 @@ const fetchAttractionData = async (id) => {
     };
   } catch (error) {
     console.error('获取数据失败:', error);
+    router.push('/not-found');
   }
 };
 

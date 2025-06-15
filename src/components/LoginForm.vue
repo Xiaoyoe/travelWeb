@@ -48,23 +48,16 @@ const handleLogin = async () => {
   loginFormRef.value.validate(async (valid) => {
     if (valid) {
       try {
-        // 调用登录action并等待返回结果
-        const response = await store.dispatch('user/login', {
+        await store.dispatch('user/login', {
           username: loginForm.username,
           password: loginForm.password
         });
         
-        // 确保获取到用户ID后再跳转
-        if (response?.user?.id) {
-          router.push({ name: 'Profile' });
-        } else {
-          console.error('登录成功但未获取到用户ID');
-        }
+        // 直接跳转到用户界面
+        router.push({ name: 'Profile' });
       } catch (error) {
         console.error('登录失败:', error);
       }
-    } else {
-      return false;
     }
   });
 };

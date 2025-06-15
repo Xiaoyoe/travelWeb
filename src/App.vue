@@ -13,7 +13,7 @@ const store = useStore();
 // 初始化数据（实际项目中应从API获取）
 onMounted(() => {
   // 模拟加载景点数据
-  store.dispatch('fetchAttractions');
+  store.dispatch('attractions/fetchAttractions');
 });
 </script>
 

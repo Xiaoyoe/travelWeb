@@ -4,7 +4,7 @@ import api from '@/services/api';
 import user from './modules/user';
 import attraction from './modules/attraction';
 import review from './modules/review';
-import favorite from './modules/favorite';
+
 import topic from './modules/topic';
 
 const store = createStore({
@@ -12,7 +12,7 @@ const store = createStore({
     user,
     attraction,
     review,
-    favorite,
+
     topic
   },
   state: {

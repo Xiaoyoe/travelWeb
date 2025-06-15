@@ -16,6 +16,7 @@
       </div>
       
       <div class="header-right">
+        <el-button @click="() => router.push({ name: 'Profile' })" type="text" class="profile-link">个人页面</el-button>
         <el-dropdown @command="handleCommand">
           <span class="el-dropdown-link">
             <i class="el-icon-user"></i>
@@ -27,7 +28,6 @@
               <el-dropdown-item v-if="!userInfo.nickname" command="login">登录</el-dropdown-item>
               <el-dropdown-item v-if="!userInfo.nickname" command="register">注册</el-dropdown-item>
               <el-dropdown-item v-if="userInfo.nickname" command="profile">个人中心</el-dropdown-item>
-              <el-dropdown-item v-if="userInfo.nickname" command="favorites">我的收藏</el-dropdown-item>
               <el-dropdown-item v-if="userInfo.nickname" command="logout">退出登录</el-dropdown-item>
             </el-dropdown-menu>
           </template>
@@ -50,7 +50,10 @@ const userInfo = computed(() => store.state.user);
 
 const search = () => {
   if (searchQuery.value) {
-    router.push({ name: 'Search', query: { keyword: searchQuery.value } });
+    router.push({ 
+      name: 'AttractionDetail', 
+      params: { id: encodeURIComponent(searchQuery.value) }
+    });
     searchQuery.value = '';
   }
 };
@@ -66,8 +69,7 @@ const handleCommand = (command) => {
     case 'profile':
       router.push({ name: 'Profile' });
       break;
-    case 'favorites':
-      router.push({ name: 'Favorites' });
+    
       break;
     case 'logout':
       store.dispatch('logout');

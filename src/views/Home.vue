@@ -140,7 +140,12 @@ onMounted(async () => {
 
 const search = () => {
   if (searchQuery.value) {
-    router.push({ name: 'Search', query: { q: searchQuery.value } });
+    router.push({ 
+      name: 'AttractionDetail', 
+      params: { 
+        id: encodeURIComponent(searchQuery.value) 
+      } 
+    });
     searchQuery.value = '';
   }
 };

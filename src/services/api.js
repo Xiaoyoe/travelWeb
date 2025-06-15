@@ -45,6 +45,9 @@ export default {
   getAttractionById(id) {
     return api.get(`/attractions/${id}`)
   },
+  getAttractionByName(name) {
+    return api.get(`/attractions/name/${name}`)
+  },
   createAttraction(attractionData) {
     return api.post('/attractions', attractionData)
   },
@@ -97,17 +100,6 @@ export default {
   },
   deleteReview(id) {
     return api.delete(`/reviews/${id}`)
-  },
-  
-  // 收藏相关API
-  getFavorites() {
-    return api.get('/favorites')
-  },
-  addFavorite(favoriteData) {
-    return api.post('/favorites', favoriteData)
-  },
-  removeFavorite(id) {
-    return api.delete(`/favorites/${id}`)
   },
   
   // 专题相关API

@@ -49,7 +49,7 @@ const router = useRouter();
 const store = useStore();
 
 const isFavorite = computed(() => {
-  return store.state.favorites?.includes(props.attraction.id) || false;
+  return false;
 });
 
 const toggleFavorite = () => {

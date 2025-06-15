@@ -39,15 +39,6 @@
       
       <div class="action-buttons">
         <el-button 
-          type="primary" 
-          size="large" 
-          icon="Heart"
-          @click="toggleFavorite"
-          :class="{ 'favorited': isFavorite }"
-        >
-          {{ isFavorite ? '已收藏' : '收藏' }}
-        </el-button>
-        <el-button 
           type="success" 
           size="large" 
           icon="Calendar"
@@ -73,7 +64,7 @@ const props = defineProps({
 const store = useStore();
 
 const isFavorite = computed(() => {
-  return store.state.favorites?.includes(props.attraction?.id) || false;
+  return false;
 });
 
 const toggleFavorite = () => {
